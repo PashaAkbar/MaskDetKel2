@@ -90,7 +90,7 @@ while True:
     # grab the frame from the threaded video stream and resize it
     # to have a maximum width of 400 pixels
     frame = vs.read()
-    frame = imutils.resize(frame, width=400)
+    frame = imutils.resize(frame, width=1000)
 
     # detect faces in the frame and determine if they are wearing a
     # face mask or not
@@ -122,8 +122,9 @@ while True:
     key = cv2.waitKey(1) & 0xFF
 
     # if the `q` key was pressed, break from the loop
-    if key == ord("q"):
+    if (key == ord("q")) | (cv2.getWindowProperty('Frame', cv2.WND_PROP_VISIBLE) < 1):
         break
+
 
 # do a bit of cleanup
 cv2.destroyAllWindows()

@@ -18,6 +18,7 @@ from sklearn.metrics import classification_report
 from imutils import paths
 import matplotlib.pyplot as plt
 import numpy as np
+import argparse
 import os
 
 # initialize the initial learning rate, number of epochs to train for,
@@ -26,7 +27,13 @@ INIT_LR = 1e-4
 EPOCHS = 20
 BS = 32
 
-DIRECTORY = r"D:\Unsri\Kecerdasan Buatan\madebysaya\dataset"
+# ap = argparse.ArgumentParser()
+# ap.add_argument("-d", "--dataset", required=True,
+# 	help="path to input dataset")
+
+# imagePaths = list(paths.list_images(args["dataset"]))
+
+DIRECTORY = r"D:\Workspace\Python\KB\MaskDetKel2\dataset"
 CATEGORIES = ["with_mask", "without_mask"]
 
 # grab the list of images in our dataset directory, then initialize
@@ -40,7 +47,7 @@ for category in CATEGORIES:
     path = os.path.join(DIRECTORY, category)
     for img in os.listdir(path):
     	img_path = os.path.join(path, img)
-    	image = load_img(img_path, target_size=(224, 224))
+		image = load_img(img_path, target_size=(224, 224))
     	image = img_to_array(image)
     	image = preprocess_input(image)
 
