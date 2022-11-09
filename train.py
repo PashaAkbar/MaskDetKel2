@@ -1,4 +1,4 @@
-# import the necessary packages
+# import
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.layers import AveragePooling2D
@@ -18,6 +18,7 @@ from sklearn.metrics import classification_report
 from imutils import paths
 import matplotlib.pyplot as plt
 import numpy as np
+import argparse
 import os
 
 # Inisialisasi Learning Rate, Epochs, dan Batch Size
@@ -25,11 +26,15 @@ INIT_LR = 1e-4
 EPOCHS = 20
 BS = 32
 
-DIRECTORY = r"D:\Unsri\Kecerdasan Buatan\madebysaya\dataset"
+# Direktori dataset
+DIRECTORY = r"D:\Workspace\Python\KB\MaskDetKel2\dataset"
+
+# Deklarasi Kaategori
 CATEGORIES = ["with_mask", "without_mask"]
 
 print("Load Gambar...")
 
+# deklarasi array data dan labels
 data = []
 labels = []
 
