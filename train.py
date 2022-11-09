@@ -1,4 +1,4 @@
-# import the necessary packages
+# import 
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.applications import MobileNetV2
 from tensorflow.keras.layers import AveragePooling2D
@@ -21,40 +21,39 @@ import numpy as np
 import argparse
 import os
 
-# initialize the initial learning rate, number of epochs to train for,
-# and batch size
+# Deklarasi Initial learning rate untuk optimizer
+# number of epochs untuk berapakali iterasi training dilakukan
+# batch size untuk menentukan banyaknya gambar yang dimasukan untuk train per epoch
 INIT_LR = 1e-4
 EPOCHS = 20
 BS = 32
 
-# ap = argparse.ArgumentParser()
-# ap.add_argument("-d", "--dataset", required=True,
-# 	help="path to input dataset")
-
-# imagePaths = list(paths.list_images(args["dataset"]))
-
+# Direktori dataset
 DIRECTORY = r"D:\Workspace\Python\KB\MaskDetKel2\dataset"
+
+# Deklarasi Kaategori
 CATEGORIES = ["with_mask", "without_mask"]
 
 # grab the list of images in our dataset directory, then initialize
 # the list of data (i.e., images) and class images
 print("[INFO] loading images...")
 
+# deklarasi array data dan labels
 data = []
 labels = []
 
+# Perulangan untuk memasukan gambar ke array data beserta label nya berdasarkan kategori 
 for category in CATEGORIES:
-    path = os.path.join(DIRECTORY, category)
-    for img in os.listdir(path):
-    	img_path = os.path.join(path, img)
+	path = os.path.join(DIRECTORY, category)
+	for img in os.listdir(path):
+		img_path = os.path.join(path, img)
 		image = load_img(img_path, target_size=(224, 224))
-    	image = img_to_array(image)
-    	image = preprocess_input(image)
+		image = img_to_array(image)
+		image = preprocess_input(image)
+		data.append(image)
+		labels.append(category)
 
-    	data.append(image)
-    	labels.append(category)
-
-# perform one-hot encoding on the labels
+# Tranform Label menjadi kategorikal
 lb = LabelBinarizer()
 labels = lb.fit_transform(labels)
 labels = to_categorical(labels)
@@ -62,9 +61,10 @@ labels = to_categorical(labels)
 data = np.array(data, dtype="float32")
 labels = np.array(labels)
 
-(trainX, testX, trainY, testY) = train_test_split(data, labels,
-	test_size=0.20, stratify=labels, random_state=42)
+# Split data
+(trainX, testX, trainY, testY) = train_test_split(data, labels,test_size=0.20, stratify=labels, random_state=42)
 
+# K
 # construct the training image generator for data augmentation
 aug = ImageDataGenerator(
 	rotation_range=20,
