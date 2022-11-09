@@ -122,7 +122,7 @@ while True:
     key = cv2.waitKey(1) & 0xFF
 
     # if the `q` key was pressed, break from the loop
-    if key == ord("q"):
+    if cv2.getWindowProperty('Frame', cv2.WND_PROP_VISIBLE) < 1:
         break
 
 # do a bit of cleanup
