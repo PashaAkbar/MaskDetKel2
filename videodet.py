@@ -85,12 +85,13 @@ maskNet = load_model("mask_detector.model")
 print("[INFO] starting video stream...")
 vs = VideoStream(src=0).start()
 
+
 # loop over the frames from the video stream
 while True:
     # grab the frame from the threaded video stream and resize it
     # to have a maximum width of 400 pixels
     frame = vs.read()
-    frame = imutils.resize(frame, width=400)
+    frame = imutils.resize(frame, width=1000)
 
     # detect faces in the frame and determine if they are wearing a
     # face mask or not
@@ -126,5 +127,11 @@ while True:
         break
 
 # do a bit of cleanup
+    # if cv2.getWindowProperty('image', cv2.WND_PROP_VISIBLE) < 1:
+    #     break
+    if cv2.getWindowProperty('Frame', cv2.WND_PROP_VISIBLE) < 1:
+        break
+
+
 cv2.destroyAllWindows()
 vs.stop()
