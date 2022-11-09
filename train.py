@@ -20,8 +20,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
-# initialize the initial learning rate, number of epochs to train for,
-# and batch size
+# Inisialisasi Learning Rate, Epochs, dan Batch Size
 INIT_LR = 1e-4
 EPOCHS = 20
 BS = 32
@@ -29,25 +28,24 @@ BS = 32
 DIRECTORY = r"D:\Unsri\Kecerdasan Buatan\madebysaya\dataset"
 CATEGORIES = ["with_mask", "without_mask"]
 
-# grab the list of images in our dataset directory, then initialize
-# the list of data (i.e., images) and class images
-print("[INFO] loading images...")
+print("Load Gambar...")
 
 data = []
 labels = []
 
+
+# append gambar ke array data dan kategori ke array labels
 for category in CATEGORIES:
     path = os.path.join(DIRECTORY, category)
     for img in os.listdir(path):
-    	img_path = os.path.join(path, img)
-    	image = load_img(img_path, target_size=(224, 224))
-    	image = img_to_array(image)
-    	image = preprocess_input(image)
+        img_path = os.path.join(path, img)
+        image = load_img(img_path, target_size=(224, 224))
+        image = img_to_array(image)
+        image = preprocess_input(image)
 
-    	data.append(image)
-    	labels.append(category)
+        data.append(image)
+        labels.append(category)
 
-# perform one-hot encoding on the labels
 lb = LabelBinarizer()
 labels = lb.fit_transform(labels)
 labels = to_categorical(labels)
@@ -55,26 +53,25 @@ labels = to_categorical(labels)
 data = np.array(data, dtype="float32")
 labels = np.array(labels)
 
+# Bagi data menjadi train dan test, dengan test sebesar 20%
 (trainX, testX, trainY, testY) = train_test_split(data, labels,
-	test_size=0.20, stratify=labels, random_state=42)
+                                                  test_size=0.20, stratify=labels, random_state=42)
 
-# construct the training image generator for data augmentation
+# Buat Image Data Generator dengan fill mode "nearest"
 aug = ImageDataGenerator(
-	rotation_range=20,
-	zoom_range=0.15,
-	width_shift_range=0.2,
-	height_shift_range=0.2,
-	shear_range=0.15,
-	horizontal_flip=True,
-	fill_mode="nearest")
+    rotation_range=20,
+    zoom_range=0.15,
+    width_shift_range=0.2,
+    height_shift_range=0.2,
+    shear_range=0.15,
+    horizontal_flip=True,
+    fill_mode="nearest")
 
-# load the MobileNetV2 network, ensuring the head FC layer sets are
-# left off
+# Base Model
 baseModel = MobileNetV2(weights="imagenet", include_top=False,
-	input_tensor=Input(shape=(224, 224, 3)))
+                        input_tensor=Input(shape=(224, 224, 3)))
 
-# construct the head of the model that will be placed on top of the
-# the base model
+# Head Model
 headModel = baseModel.output
 headModel = AveragePooling2D(pool_size=(7, 7))(headModel)
 headModel = Flatten(name="flatten")(headModel)
@@ -82,29 +79,27 @@ headModel = Dense(128, activation="relu")(headModel)
 headModel = Dropout(0.5)(headModel)
 headModel = Dense(2, activation="softmax")(headModel)
 
-# place the head FC model on top of the base model (this will become
-# the actual model we will train)
+# Model yang akan dipakai
 model = Model(inputs=baseModel.input, outputs=headModel)
 
-# loop over all layers in the base model and freeze them so they will
-# *not* be updated during the first training process
+# :pp semua layer di baseModel supaya pada saat awal training tidak diupdate
 for layer in baseModel.layers:
-	layer.trainable = False
+    layer.trainable = False
 
-# compile our model
+# compile model
 print("[INFO] compiling model...")
 opt = Adam(lr=INIT_LR, decay=INIT_LR / EPOCHS)
 model.compile(loss="binary_crossentropy", optimizer=opt,
-	metrics=["accuracy"])
+              metrics=["accuracy"])
 
-# train the head of the network
+# train model
 print("[INFO] training head...")
 H = model.fit(
-	aug.flow(trainX, trainY, batch_size=BS),
-	steps_per_epoch=len(trainX) // BS,
-	validation_data=(testX, testY),
-	validation_steps=len(testX) // BS,
-	epochs=EPOCHS)
+    aug.flow(trainX, trainY, batch_size=BS),
+    steps_per_epoch=len(trainX) // BS,
+    validation_data=(testX, testY),
+    validation_steps=len(testX) // BS,
+    epochs=EPOCHS)
 
 # make predictions on the testing set
 print("[INFO] evaluating network...")
@@ -116,13 +111,13 @@ predIdxs = np.argmax(predIdxs, axis=1)
 
 # show a nicely formatted classification report
 print(classification_report(testY.argmax(axis=1), predIdxs,
-	target_names=lb.classes_))
+                            target_names=lb.classes_))
 
-# serialize the model to disk
+# Simpan Model
 print("[INFO] saving mask detector model...")
 model.save("mask_detector.model", save_format="h5")
 
-# plot the training loss and accuracy
+# plot akurasi dan loss model
 N = EPOCHS
 plt.style.use("ggplot")
 plt.figure()
