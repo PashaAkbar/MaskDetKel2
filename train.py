@@ -27,7 +27,7 @@ EPOCHS = 20
 BS = 32
 
 # Direktori dataset
-DIRECTORY = r"D:\Workspace\Python\KB\MaskDetKel2\dataset"
+DIRECTORY = r"D:\Unsri\Kecerdasan Buatan\Kelompok2\MaskDetKel2\dataset-kaggle"
 
 # Deklarasi Kaategori
 CATEGORIES = ["with_mask", "without_mask"]
