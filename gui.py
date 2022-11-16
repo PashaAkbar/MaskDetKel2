@@ -84,9 +84,10 @@ faceNet = cv2.dnn.readNet(prototxtPath, weightsPath)
 # load the face mask detector model from disk
 maskNet = load_model("mask_detector.model")
 
-def deteksi(frame, stat):
+def deteksi(frame):
     # Perulangan frmae videostream
-    while True:
+    global stat
+    while stat:
         # mendeteksi wajah dengan memanggil fungsi detect_and_predict_mask
         (locs, preds) = detect_and_predict_mask(frame, faceNet, maskNet)
 
@@ -107,13 +108,7 @@ def deteksi(frame, stat):
             frame = cv2.putText(frame, label, (startX, startY - 10),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.45, color, 2)
             frame = cv2.rectangle(frame, (startX, startY), (endX, endY), color, 2)
-        
-        def stop() :
-            global video
-            stat = False
-            vd.place_forget()
-            video.release()
-        
+            
         if stat == False:
             break
 
@@ -121,30 +116,33 @@ def deteksi(frame, stat):
 # GUI
 frame = tk.Tk()
 frame.geometry("1000x680+200+10")
-frame.title("Deteksi Masker")
+frame.title("Face Mask Detection by Kelompok 2 KB-L2")
 
-bgImage = tk.PhotoImage(file="bg-1.png")
+# bgImage = tk.PhotoImage(file="bg.png")
+
+bgImage = tk.PhotoImage(file="BG.png")
 
 bg = tk.Label(frame, image=bgImage).place(x=0, y=0, relwidth=1, relheight=1)
 
 vd = tk.Label(frame, bg="black")
-vd.place(x=187, y=75)
 
 def videostream():
-    global vs
+    vd.place(x=180, y=112)   
+    global vs, stat
     # Inisiasi Videostream 
     print("[INFO] starting video stream...")
+    stat = True
     vs = VideoStream(src=0).start()
     # vs = cv2.VideoCapture(0)
 
     framevideo()
 
-# f = tk.Frame(frame, vd.start)
+
 def framevideo():
-    stat = True
+    global stat
     frame = vs.read()
     frame = imutils.resize(frame, width = 640)
-    frame = deteksi(frame, stat)
+    frame = deteksi(frame)
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
     img  = Image.fromarray(frame)
     image = ImageTk.PhotoImage(image=img)
@@ -153,13 +151,20 @@ def framevideo():
     vd.after(10, framevideo)
 
 
-    
-BStart = tk.Button(frame, text ="start", command = videostream)
-BStart.place(x=450, y=600)
+def stop() :
+    global video, stat
+    stat = False
+    vd.place_forget()
+    cv2.destroyAllWindows()
+    vs.stop()
+
+
+BStart = tk.Button(frame, text ="start", command = videostream, width=25, height=1, relief="flat")
+BStart.place(x=290, y=620)
 # BStart.pack()
 
-BQuit = tk.Button(frame, text ="Stop", command = stop)
-BQuit.place(x=550, y=600)
+BQuit = tk.Button(frame, text ="Stop", command = stop, width=25, height=1, relief="flat")
+BQuit.place(x=490, y=620)
 # BQuit.pack()
 
 frame.mainloop()
