@@ -12,9 +12,7 @@ from tensorflow.keras.models import load_model
 from imutils.video import VideoStream
 import numpy as np
 import imutils
-import time
 import cv2
-import os
 
 # fungsi untuk mendeteksi lokasi wajah dan presiksi masker
 
@@ -126,7 +124,7 @@ frame.title("Face Mask Detection by Kelompok 2 KB-L2")
 
 # bgImage = tk.PhotoImage(file="bg.png")
 
-bgImage = tk.PhotoImage(file="BG.png")
+bgImage = tk.PhotoImage(file="BG-1.png")
 
 bg = tk.Label(frame, image=bgImage).place(x=0, y=0, relwidth=1, relheight=1)
 
@@ -141,7 +139,6 @@ def videostream():
     stat = True
     vs = VideoStream(src=0).start()
     # vs = cv2.VideoCapture(0)
-
     framevideo()
 
 
