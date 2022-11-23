@@ -14,12 +14,14 @@ import numpy as np
 import imutils
 import cv2
 
- # fungsi untuk mendeteksi lokasi wajah dan presiksi masker
+# fungsi untuk mendeteksi lokasi wajah dan presiksi masker
+
+
 def detect_and_predict_mask(frame, faceNet, maskNet):
     # grab the dimensions of the frame and then construct a blob from it
     (h, w) = frame.shape[:2]
     blob = cv2.dnn.blobFromImage(frame, 1.0, (224, 224),
-                                (104.0, 177.0, 123.0))
+                                 (104.0, 177.0, 123.0))
 
     # pass the blob through the network and obtain the face detections
     faceNet.setInput(blob)
@@ -72,7 +74,7 @@ def detect_and_predict_mask(frame, faceNet, maskNet):
 
     # return loakasi wajah dan hasil prediksi
     return (locs, preds)
-    
+
 
 # load our serialized face detector model from disk
 prototxtPath = r"face_detector\deploy.prototxt"
@@ -81,6 +83,7 @@ faceNet = cv2.dnn.readNet(prototxtPath, weightsPath)
 
 # load the face mask detector model from disk
 maskNet = load_model("mask_detector.model")
+
 
 def deteksi(frame):
     # Perulangan frmae videostream
@@ -104,13 +107,16 @@ def deteksi(frame):
 
             # Memasukan text label serta box deteksi pada output frame
             frame = cv2.putText(frame, label, (startX, startY - 10),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.45, color, 2)
-            frame = cv2.rectangle(frame, (startX, startY), (endX, endY), color, 2)
-            
+                                cv2.FONT_HERSHEY_SIMPLEX, 0.45, color, 2)
+            frame = cv2.rectangle(frame, (startX, startY),
+                                  (endX, endY), color, 2)
+
         if stat == False:
             break
 
         return frame
+
+
 # GUI
 frame = tk.Tk()
 frame.geometry("1000x680+200+10")
@@ -124,10 +130,11 @@ bg = tk.Label(frame, image=bgImage).place(x=0, y=0, relwidth=1, relheight=1)
 
 vd = tk.Label(frame, bg="black")
 
+
 def videostream():
-    vd.place(x=180, y=112)   
+    vd.place(x=180, y=112)
     global vs, stat
-    # Inisiasi Videostream 
+    # Inisiasi Videostream
     print("[INFO] starting video stream...")
     stat = True
     vs = VideoStream(src=0).start()
@@ -138,17 +145,17 @@ def videostream():
 def framevideo():
     global stat
     frame = vs.read()
-    frame = imutils.resize(frame, width = 640)
+    frame = imutils.resize(frame, width=640)
     frame = deteksi(frame)
     frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-    img  = Image.fromarray(frame)
+    img = Image.fromarray(frame)
     image = ImageTk.PhotoImage(image=img)
     vd.configure(image=image)
     vd.image = image
     vd.after(10, framevideo)
 
 
-def stop() :
+def stop():
     global video, stat
     stat = False
     vd.place_forget()
@@ -156,11 +163,13 @@ def stop() :
     vs.stop()
 
 
-BStart = tk.Button(frame, text ="start", command = videostream, width=25, height=1, relief="flat")
+BStart = tk.Button(frame, text="start", command=videostream,
+                   width=25, height=1, relief="flat")
 BStart.place(x=290, y=620)
 # BStart.pack()
 
-BQuit = tk.Button(frame, text ="Stop", command = stop, width=25, height=1, relief="flat")
+BQuit = tk.Button(frame, text="Stop", command=stop,
+                  width=25, height=1, relief="flat")
 BQuit.place(x=490, y=620)
 # BQuit.pack()
 
