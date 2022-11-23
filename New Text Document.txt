@@ -1,0 +1,14 @@
+@echo OFF
+
+ECHO "Choose an option .."
+ECHO "install to install library"
+ECHO "start to run code"
+
+
+SET /p option=Choose one option-
+
+IF %option%==1 pip install -r requirements.txt
+IF %option%==2 py gui.py
+
+
+PAUSE
